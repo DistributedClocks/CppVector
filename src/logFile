@@ -1,0 +1,12 @@
+myPID {myPID: 1}
+Initialization Complete
+myPID {myPID: 2}
+LLE
+myPID {myPID: 3}
+PrepareSend message
+myPID {myPID: 3}
+UnpackReceive message
+myPID {myPID: 5}
+PrepareSend message
+myPID {myPID: 5}
+UnpackReceive message
