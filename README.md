@@ -20,7 +20,7 @@ bool LogLocalEvent(string message)
 
 #### initCppVector
 ```
-	void initCppVector(string pid, string logfilename)
+  void initCppVector(string pid, string logfilename)
 ```
 
 pid (string): local process name; must be unique in your distributed system.
