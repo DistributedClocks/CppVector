@@ -1,3 +1,8 @@
+/*
+    This is a sample program that I use to learn msgpack with;
+    it is not a part of the main library.
+*/
+
 #include <msgpack.hpp>
 #include <string>
 #include <iostream>

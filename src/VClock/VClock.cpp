@@ -1,10 +1,3 @@
-/*
- * VClock.cpp
- *
- *  Created on: Jul 19, 2017
- *      Author: cfung
- */
-
 #include "VClock.h"
 #include <iostream>
 #include <map>

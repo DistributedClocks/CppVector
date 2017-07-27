@@ -1,10 +1,3 @@
-/*
- * VClock.h
- *
- *  Created on: Jul 19, 2017
- *      Author: cfung
- */
-
 #include <string>
 #include <map>
 

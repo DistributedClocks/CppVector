@@ -1,11 +1,3 @@
-//============================================================================
-// Name        : CpVector.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
 #include "CppVec.h"
 #include <msgpack.hpp>
 #include <iostream>
