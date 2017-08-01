@@ -80,7 +80,7 @@ string VClock::getVCString() {
 
 	ss << "{";
 	for (clock_iterator c = _vc.begin() ; c != _vc.end(); ++c) {
-		ss << c -> first << ": " << c -> second;
+		ss << "\"" << c -> first << "\": " << c -> second;
 		
 		// In C++, hasNext is only done by 
 		// copying the iterator and advancing it
