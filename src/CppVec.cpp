@@ -71,3 +71,5 @@ bool CppVec::logLocalEvent(string message) {
 	return ok;
 }
 
+
+

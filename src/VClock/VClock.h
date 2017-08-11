@@ -1,3 +1,6 @@
+#ifndef VCLOCK_H
+#define VCLOCK_H
+
 #include <string>
 #include <map>
 
@@ -25,3 +28,5 @@ private:
 	std::map<std::string, int> _vc;
 
 };
+
+#endif // VCLOCK_H 

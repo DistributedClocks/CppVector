@@ -1,5 +1,9 @@
+#ifndef CPPVEC_H
+#define CPPVEC_H
+
 #include "./VClock/VClock.h"
 
+#include <iostream>
 #include <mutex>
 #include <msgpack.hpp>
 #include <sstream>
@@ -16,8 +20,8 @@ public:
 	VClock getCurrentVC();
 	bool logThis(std::string, std::string);
 	bool logLocalEvent(std::string);
-	template <typename T> const char* prepareSend(std::string message, T payload);
-	template <typename T> void unpackReceive(std::string message, const char* buffer, 
+	template <typename T> char* prepareSend(std::string message, T payload);
+	template <typename T> void unpackReceive(std::string message, char* buffer, 
 		T* unpack, int numBytes);
 
 private:
@@ -32,53 +36,65 @@ private:
 };
 
 template <typename T> 
-const char* CppVec::prepareSend(std::string message, T payload) {
+char* CppVec::prepareSend(std::string message, T payload) {
    
 	_mutex.lock();
 	_currentVC.tick(_pid);
 
-	// Define a new type for the clockpayload and create it
-	typedef msgpack::type::tuple<std::string, T, std::map<std::string, int> > clockPayload;
-    clockPayload data(_pid, payload, _currentVC.getClock());
+	msgpack::sbuffer buffer;
+	msgpack::packer<msgpack::sbuffer> pk(buffer);
+
+	pk.pack(_pid);
+	pk.pack(payload);
+	pk.pack(_currentVC.getClock());
 
     // write to local log
     logThis(message, _currentVC.getVCString());
 
-    // serialize the object into the buffer.
-    // any classes that implements write(const char*, size_t) can be a buffer.
-    std::stringstream buffer;
-    msgpack::pack(buffer, data);
+    size_t len = buffer.size();
 
-    // copy the buffer to a const char* to send on the wire
-    const std::string tmp = buffer.str();
-    const char* cstr = tmp.c_str();
+    // copy the buffer to a char* to send on the wire
+    char* outBuf = (char*)malloc(len);
+    memcpy(outBuf, buffer.data(), len);
 
     _mutex.unlock();
 
-    return cstr;
+    return outBuf;
 
 } 
 
 template <typename T> 
-void CppVec::unpackReceive(std::string message, const char* buffer, T* unpack, int numBytes) {
+void CppVec::unpackReceive(std::string message, char* buffer, T* unpack, int numBytes) {
 
 	_mutex.lock();
 	
-	// Define clock payload type
-	typedef msgpack::type::tuple<std::string, T, std::map<std::string, int> > clockPayload;
+	std::string pid;
+	T payload;
+    std::map<std::string, int> theirVCMap;
+    
+    std::size_t off = 0;
 
-	// Unroll the buffer into a msgpack::object
-	msgpack::object_handle oh = msgpack::unpack(buffer, numBytes);
-    msgpack::object deserialized = oh.get();
+    // unpack the PID first as string
+    msgpack::object_handle result;    
+    msgpack::unpack(result, buffer, numBytes, off);
+    msgpack::object obj1(result.get());
 
-    // convert msgpack::object instance into the original type.
-    // if the type is mismatched, it throws msgpack::type_error exception.
-    clockPayload dst;
-    deserialized.convert(dst);
+    obj1.convert(pid);
+
+    // Unpack the payload as second piece
+    msgpack::unpack(result, buffer, numBytes, off);
+    msgpack::object obj2(result.get());
+
+    obj2.convert(payload);
+
+    msgpack::unpack(result, buffer, numBytes, off);
+    msgpack::object obj3(result.get());
+
+    obj3.convert(theirVCMap);
 
     // Unroll the T type into interface
-    *unpack = std::get<1>(dst);
-    std::map<std::string, int> theirVCMap = std::get<2>(dst);
+    *unpack = payload;
+  
     VClock theirVC = VClock();
     theirVC.copyFromMap(theirVCMap);
 
@@ -92,3 +108,5 @@ void CppVec::unpackReceive(std::string message, const char* buffer, T* unpack, i
 	_mutex.unlock();
 
 }
+
+#endif /* CPPVEC_H */

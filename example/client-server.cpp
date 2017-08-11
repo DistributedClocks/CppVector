@@ -70,7 +70,7 @@ int server() {
 
     	int nBytes = recvfrom(sockfd, inBuf, MAXBUFLEN-1, 0,
             (struct sockaddr*) &cli_addr, &clilen);
-    
+
 	    if (nBytes < 0) {
 	    	cout << "ERROR reading from socket" << endl;
 	    	exit(0);
@@ -94,13 +94,15 @@ int server() {
             n = nMinOne + nMinTwo;
         }
 
-	    const char* outBuf = cv.prepareSend("Sending message to client", n);
+	    char* outBuf = cv.prepareSend("Sending message to client", n);
 	    nBytes = sendto(sockfd, outBuf, MAXBUFLEN, 0, (struct sockaddr*) &cli_addr, clilen);
 	    
 	    if (nBytes < 0) {
 	    	cout << "ERROR writing to socket" << endl;
 	    	exit(0);
 	    }
+
+        free(outBuf);
 
     }
 
@@ -132,15 +134,17 @@ int client() {
     for (i = 0; i < MESSAGES; i++) {
 	    
 	    // Use GoVector prepareSend, then send the buffer
-	    const char* outBuf = cv.prepareSend("Sending message to server", i);
+	    char* outBuf = cv.prepareSend("Sending message to server", i);
 
 	    int nBytes = sendto(sockfd, outBuf, MAXBUFLEN-1, 0, (struct sockaddr*) &serv_addr, servlen);
-	    
+
 	    if (nBytes < 0) {
 	    	cout << "ERROR writing to socket" << endl;
 	    	exit(0);
 	    }
-	        
+	       
+        free(outBuf);
+
 	    char inBuf[MAXBUFLEN];
 	    bzero(inBuf, MAXBUFLEN);
 
