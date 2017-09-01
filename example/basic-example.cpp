@@ -46,7 +46,7 @@ int main() {
 	cv.initCppVector("myPID", "logFile");
 	
 	// Create the buffer
-	const char* buffer;
+	char* buffer;
 	
 	string s = "placeholder";
 	buffer = cv.prepareSend("PrepareSend message", "myPayload");
