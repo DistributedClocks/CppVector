@@ -43,7 +43,6 @@ int VClock::lastUpdate() {
 
 	// Find the highest VClock value
 	for (clock_iterator c = _vc.begin() ; c != _vc.end(); ++c) {
-		cout << last << endl;
 		if (c -> second > last) {
 			last = c -> second;
 		}

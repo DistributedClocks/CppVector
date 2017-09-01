@@ -4,12 +4,7 @@
 #include "catch.hpp"
 #include "../src/CppVec.h"
 
-struct SampleStruct {
-    int X;
-    std::string Y;
-};
-
-TEST_CASE( " CppVector Test") {
+TEST_CASE( "CppVector Test") {
 
     CppVec cv;
     cv.initCppVector("test", "testfile");
@@ -62,35 +57,58 @@ TEST_CASE( " CppVector Test") {
 
 }
 
-TEST_CASE( "Example test" ) {
+TEST_CASE( "VClock test") {
 
-    std::vector<int> v( 5 );
+    VClock clock1 = VClock();
+    clock1.set("a", 1);
+    clock1.set("b", 8);
+    clock1.set("c", 2);
     
-    REQUIRE( v.size() == 5 );
-    REQUIRE( v.capacity() >= 5 );
-    
-    SECTION( "resizing bigger changes size and capacity" ) {
-        v.resize( 10 );
-        
-        REQUIRE( v.size() == 10 );
-        REQUIRE( v.capacity() >= 10 );
+    SECTION ( "VClock set and tick ") {
+
+        REQUIRE( clock1.findTicks("a") == 1 );
+        REQUIRE( clock1.findTicks("b") == 8 );
+        REQUIRE( clock1.findTicks("c") == 2 );
+
+        clock1.tick("a");
+
+        REQUIRE( clock1.findTicks("a") == 2 );
+        REQUIRE( clock1.findTicks("b") == 8 );
+        REQUIRE( clock1.findTicks("c") == 2 );
+
+        clock1.tick("d");
+
+        REQUIRE( clock1.findTicks("a") == 2 );
+        REQUIRE( clock1.findTicks("b") == 8 );
+        REQUIRE( clock1.findTicks("c") == 2 );
+        REQUIRE( clock1.findTicks("d") == 1 );
+
+        REQUIRE( clock1.lastUpdate() == 8 );
+
     }
-    SECTION( "resizing smaller changes size but not capacity" ) {
-        v.resize( 0 );
-        
-        REQUIRE( v.size() == 0 );
-        REQUIRE( v.capacity() >= 5 );
+
+    // State does not persist from test.
+    clock1.tick("d");
+
+    VClock clock2 = VClock();
+    clock2.set("a", 3);
+    clock2.set("b", 5);
+    clock2.set("c", 1);
+    clock2.set("e", 2);
+
+    SECTION (" VClock merge ") {
+
+        clock1.merge(clock2);
+
+        REQUIRE( clock1.findTicks("a") == 3 );
+        REQUIRE( clock1.findTicks("b") == 8 );
+        REQUIRE( clock1.findTicks("c") == 2 );
+        REQUIRE( clock1.findTicks("d") == 1 );
+        REQUIRE( clock1.findTicks("e") == 2 ); 
+
+        REQUIRE( clock1.lastUpdate() == 8 );
+
     }
-    SECTION( "reserving bigger changes capacity but not size" ) {
-        v.reserve( 10 );
-        
-        REQUIRE( v.size() == 5 );
-        REQUIRE( v.capacity() >= 10 );
-    }
-    SECTION( "reserving smaller does not change size or capacity" ) {
-        v.reserve( 0 );
-        
-        REQUIRE( v.size() == 5 );
-        REQUIRE( v.capacity() >= 5 );
-    }
+
 }
+
