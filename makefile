@@ -24,3 +24,5 @@ cppvec-tests.o: clean $(SOURCES)
 
 clean:
 	$(RM) *.o
+
+.PHONY: all test clean
