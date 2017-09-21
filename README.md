@@ -1,11 +1,10 @@
-CppVector (Work in progress)
+CppVector
 ===========
 
-This library can be added to a c++ project to generate a ShiViz-compatible vector-clock timestamped log of events in a concurrent or distributed system. CppVector is compatible with C++11.
+This library can be added to a C++ project to generate a ShiViz-compatible vector-clock timestamped log of events in a concurrent or distributed system. CppVector is compatible with C++11.
 
 ### Usage
 
-Not ready yet.
 Compile the project using:
 
 ```g++ -W -Wall -Werror -std=c++11 CppVec.cpp ./VClock/VClock.cpp```
