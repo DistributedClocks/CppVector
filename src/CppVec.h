@@ -18,11 +18,14 @@ public:
 
 	void initCppVector(std::string, std::string);
 	VClock getCurrentVC();
-	bool logThis(std::string, std::string);
 	bool logLocalEvent(std::string);
 	template <typename T> char* prepareSend(std::string message, T payload);
 	template <typename T> void unpackReceive(std::string message, char* buffer, 
 		T* unpack, int numBytes);
+
+protected:
+
+	bool logThis(std::string, std::string);
 
 private:
 
